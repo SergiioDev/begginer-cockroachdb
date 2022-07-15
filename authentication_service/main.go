@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+
 	http.HandleFunc("/", index)
 	http.HandleFunc("/auth/google", google_login.AuthGoogle)
 

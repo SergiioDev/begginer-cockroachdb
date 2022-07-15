@@ -4,29 +4,45 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
-const (
-	ClientId          = "991327617354-070psq66mleedhlg5bbmalch1esap5bo.apps.googleusercontent.com"
-	ClientSecret      = "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"
-	oauthGoogleUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
+var (
+	clientId     string
+	clientSecret string
+	oAuthConfig  *oauth2.Config
 )
+
+func init() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	clientId = os.Getenv("CLIENT_ID")
+	clientSecret = os.Getenv("CLIENT_SECRET")
+
+	oAuthConfig = &oauth2.Config{
+		ClientID:     clientId,
+		ClientSecret: clientSecret,
+		Endpoint:     google.Endpoint,
+		RedirectURL:  "http://localhost:8080/redirect",
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid "},
+	}
+
+}
+
+const oauthGoogleUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
 
 type GoogleResponse struct {
 	Email string `json:"email"`
-}
-
-var oAuthConfig = &oauth2.Config{
-	ClientID:     ClientId,
-	ClientSecret: ClientSecret,
-	Endpoint:     google.Endpoint,
-	RedirectURL:  "http://localhost:8080/redirect",
-	Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid "},
 }
 
 func AuthGoogle(w http.ResponseWriter, r *http.Request) {

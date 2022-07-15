@@ -2,7 +2,10 @@ module github.com/SergiioDev/begginer-cockroachdb
 
 go 1.18
 
-require golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0
+require (
+	github.com/joho/godotenv v1.4.0
+	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0
+)
 
 require (
 	cloud.google.com/go/compute v1.7.0 // indirect
